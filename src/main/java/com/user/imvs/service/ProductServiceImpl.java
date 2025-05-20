@@ -65,7 +65,7 @@ public class ProductServiceImpl implements IProduct{
         CategoryDTO cdto = new CategoryDTO();
         SupplierDTO sdto = new SupplierDTO();
         cdto.setName(product.getCategory().getName());
-        sdto.setName(product.getSupplier().getName());
+        sdto.setName(product.getSupplier().getCompanyName());
 
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
