@@ -1,44 +1,43 @@
 package com.user.imvs.controller;
 
 import com.user.imvs.dtos.ProductDTO;
-import com.user.imvs.model.Product;
-import com.user.imvs.service.ProductServiceImpl;
+import com.user.imvs.service.IProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/products")
-@CrossOrigin(origins = "*") // allow frontend calls during dev
+@RequestMapping("/api/v1/products")
 public class ProductController {
 
-    private final ProductServiceImpl productService;
+    private final IProductService productService;
 
-    public ProductController(ProductServiceImpl productService) {
+    public ProductController(IProductService productService) {
         this.productService = productService;
     }
 
-    @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody Product product) {
-        ProductDTO prod=productService.createProduct(product);
-        return ResponseEntity.ok(prod) ;
-    }
-
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public List<ProductDTO> getAll() {
+        return productService.getAllProducts();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-         ProductDTO pro= productService.updateProduct(id, product);
-        return ResponseEntity.ok(pro);
+    @GetMapping("/{id}")
+    public ProductDTO getById(@PathVariable Long id) {
+        return productService.getProductById(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<ProductDTO> create(@RequestBody ProductDTO dto) {
+        ProductDTO created = productService.createProduct(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
     }
 }
+

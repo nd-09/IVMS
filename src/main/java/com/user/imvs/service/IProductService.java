@@ -5,9 +5,10 @@ import com.user.imvs.model.Product;
 
 import java.util.List;
 
-public interface IProduct {
-    ProductDTO createProduct(Product product);
+public interface IProductService {
+    ProductDTO createProduct(ProductDTO product);
     List<ProductDTO> getAllProducts();
-    ProductDTO updateProduct(Long id, Product product);
+    ProductDTO getProductById(Long id);
+    ProductDTO updateProduct(Long id, ProductDTO product);
     void deleteProduct(Long id);
 }

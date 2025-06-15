@@ -2,77 +2,64 @@ package com.user.imvs.service;
 
 import com.user.imvs.dtos.CategoryDTO;
 import com.user.imvs.dtos.ProductDTO;
-import com.user.imvs.dtos.SupplierDTO;
-import com.user.imvs.exception.ProductNotFoundException;
+import com.user.imvs.exception.ResourceNotFound;
+import com.user.imvs.mappers.ProductMapper;
 import com.user.imvs.model.Product;
 import com.user.imvs.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductServiceImpl implements IProduct{
+public class ProductServiceImpl implements IProductService {
 
-    private final ProductRepository productRepository;
+    private final ProductRepository productRepo;
+    private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductServiceImpl(ProductRepository productRepo, ProductMapper productMapper) {
+        this.productRepo = productRepo;
+        this.productMapper = productMapper;
     }
 
-    @Override
-    public ProductDTO createProduct(Product product) {
-        Product savedProduct = productRepository.save(product);
-        return convertToDTO(savedProduct);
-    }
-
-    @Override
     public List<ProductDTO> getAllProducts() {
-        List<Product> prods= productRepository.findAll();
-        List<ProductDTO> productDTOS = new ArrayList<>();
-        for (Product product : prods) {
-            productDTOS.add(convertToDTO(product));
-        }
-        return productDTOS;
+        return productRepo.findAll().stream()
+                .map(productMapper::toDto)
+                .toList();
+    }
+
+    public ProductDTO getProductById(Long id) {
+        Product product = productRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Product not found"));
+        return productMapper.toDto(product);
     }
 
     @Override
-    public ProductDTO updateProduct(Long id, Product updatedProduct) {
-        Optional<Product> pro =productRepository.findById(id);
+    public ProductDTO updateProduct(Long id, ProductDTO updatedProduct) {
+        Optional<Product> pro =productRepo.findById(id);
         if(pro.isPresent()) {
+            CategoryDTO cat=new CategoryDTO();
+            cat.setName(updatedProduct.getCategory().getName());
             Product product = pro.get();
             product.setName(updatedProduct.getName());
             product.setDescription(updatedProduct.getDescription());
             product.setPrice(updatedProduct.getPrice());
-            product.setCategory(updatedProduct.getCategory());
-            productRepository.save(product);
-            return convertToDTO(product);
+            productRepo.save(product);
+            return productMapper.toDto(product);
         }else{
-            throw new ProductNotFoundException("Product with "+id+" not found");
+            throw new ResourceNotFound("Product with "+id+" not found");
         }
     }
 
-    @Override
-    public void deleteProduct(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product with id "+id+ ": not found"));
-        productRepository.delete(product);
+    public ProductDTO createProduct(ProductDTO dto) {
+        Product product = productMapper.toEntity(dto);
+        Product saved = productRepo.save(product);
+        return productMapper.toDto(saved);
     }
 
-    private ProductDTO convertToDTO(Product product) {
-        ProductDTO dto = new ProductDTO();
-        CategoryDTO cdto = new CategoryDTO();
-        SupplierDTO sdto = new SupplierDTO();
-        cdto.setName(product.getCategory().getName());
-        sdto.setName(product.getSupplier().getCompanyName());
-
-        dto.setName(product.getName());
-        dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
-        dto.setStockQuantity(product.getStockQuantity());
-        dto.setCategory(cdto);
-        dto.setSupplier(sdto);
-        return dto;
+    public void deleteProduct(Long id) {
+        if (!productRepo.existsById(id))
+            throw new ResourceNotFound("Product not found");
+        productRepo.deleteById(id);
     }
 }
