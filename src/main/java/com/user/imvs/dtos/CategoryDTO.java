@@ -12,4 +12,8 @@ public class CategoryDTO {
     public void setName(String name){
         this.name = name;
     }
+    public CategoryDTO(String name){
+        this.name = name;
+    }
+    public CategoryDTO(){}
 }

@@ -1,9 +1,13 @@
 package com.user.imvs.controller;
 
+import com.user.imvs.dtos.ProductCreateDTO;
 import com.user.imvs.dtos.ProductDTO;
 import com.user.imvs.service.IProductService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +33,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> create(@RequestBody ProductDTO dto) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProductDTO> create(@RequestBody ProductCreateDTO dto) throws BadRequestException {
         ProductDTO created = productService.createProduct(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }

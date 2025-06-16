@@ -1,12 +1,16 @@
 package com.user.imvs.service;
 
 import com.user.imvs.dtos.CategoryDTO;
+import com.user.imvs.dtos.ProductCreateDTO;
 import com.user.imvs.dtos.ProductDTO;
 import com.user.imvs.exception.ResourceNotFound;
 import com.user.imvs.mappers.ProductMapper;
+import com.user.imvs.model.Category;
 import com.user.imvs.model.Product;
+import com.user.imvs.repository.CategoryRepository;
 import com.user.imvs.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +19,12 @@ import java.util.Optional;
 public class ProductServiceImpl implements IProductService {
 
     private final ProductRepository productRepo;
+    private final CategoryRepository categoryRepo;
     private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepo, ProductMapper productMapper) {
+    public ProductServiceImpl(ProductRepository productRepo, ProductMapper productMapper, CategoryRepository categoryRepo) {
         this.productRepo = productRepo;
+        this.categoryRepo=categoryRepo;
         this.productMapper = productMapper;
     }
 
@@ -51,10 +57,29 @@ public class ProductServiceImpl implements IProductService {
         }
     }
 
-    public ProductDTO createProduct(ProductDTO dto) {
-        Product product = productMapper.toEntity(dto);
-        Product saved = productRepo.save(product);
-        return productMapper.toDto(saved);
+    @Transactional
+    @Override
+    public ProductDTO createProduct(ProductCreateDTO dto) {
+        try {
+            Category category = categoryRepo.findByName(dto.getCategory().getName().toUpperCase())
+                    .orElseGet(() -> {
+                        Category newCat = new Category();
+                        newCat.setName(dto.getCategory().getName().toUpperCase());
+                        return categoryRepo.saveAndFlush(newCat);
+                    });
+
+            Product product = new Product();
+            product.setName(dto.getName());
+            product.setDescription(dto.getDescription());
+            product.setPrice(dto.getPrice());
+            product.setStockQuantity(dto.getStockQuantity());
+            product.setCategory(category);
+            productRepo.save(product);
+
+            return productMapper.toDto(product);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create product");
+        }
     }
 
     public void deleteProduct(Long id) {
