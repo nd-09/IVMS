@@ -8,6 +8,7 @@ public class UserDTO {
   private Long id;
   private String username;
   private String email;
+  private String password;
   private Role role;
 
   public Long getId() {
@@ -34,5 +35,11 @@ public class UserDTO {
   }
   public void setRole(Role role) {
           this.role = role;
+  }
+  public String getPassword() {
+      return this.password;
+  }
+  public void setPassword(String password) {
+      this.password = password;
   }
 }
