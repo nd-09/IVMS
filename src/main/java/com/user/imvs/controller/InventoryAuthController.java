@@ -2,7 +2,6 @@ package com.user.imvs.controller;
 
 import com.user.imvs.dtos.AuthServiceResponse;
 import com.user.imvs.dtos.LoginRequestDTO;
-import com.user.imvs.dtos.RegisterRequestDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +23,6 @@ public class InventoryAuthController {
 
     public InventoryAuthController(WebClient.Builder webClientBuilder){
         this.webClientBuilder = webClientBuilder;
-    }
-
-
-    @PostMapping("/register")
-    public Mono<ResponseEntity<AuthServiceResponse>> register(@RequestBody RegisterRequestDTO request) {
-        return webClientBuilder.build()
-                .post()
-                .uri(authServiceUrl + "/api/v1/auth/register")
-                .bodyValue(request)
-                .retrieve()
-                .toEntity(AuthServiceResponse.class)
-                .onErrorResume(error -> Mono.just(ResponseEntity.status(HttpStatus.BAD_GATEWAY).build()));
     }
 
     @PostMapping("/login")

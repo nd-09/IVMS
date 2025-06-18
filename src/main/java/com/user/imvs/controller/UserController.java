@@ -1,5 +1,6 @@
 package com.user.imvs.controller;
 
+import com.user.imvs.dtos.RegisterResponseDTO;
 import com.user.imvs.dtos.UserDTO;
 import com.user.imvs.service.IUserService;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO dto) {
-        UserDTO created = userService.create(dto);
+    public ResponseEntity<RegisterResponseDTO> createUser(@RequestBody UserDTO dto) {
+        RegisterResponseDTO created = userService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

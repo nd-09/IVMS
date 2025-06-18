@@ -1,8 +1,8 @@
 package com.user.imvs.dtos;
 
 public class AuthServiceResponse {
-        private String token;
         private String username;
+        private String token;
 
         public String getToken() {
             return this.token;

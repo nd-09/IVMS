@@ -1,5 +1,6 @@
 package com.user.imvs.mappers;
 
+import com.user.imvs.dtos.RegisterResponseDTO;
 import com.user.imvs.dtos.UserDTO;
 import com.user.imvs.model.User;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,17 @@ public class UserMapper {
         user.setPassword(encodedPassword);
         user.setRole(dto.getRole());
         return user;
+    }
+    public RegisterResponseDTO toRegisterResponseDto(User user, String encodedPassword,String token) {
+        RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
+        registerResponseDTO.setUsername(user.getUsername());
+        registerResponseDTO.setEmail(user.getEmail());
+        registerResponseDTO.setPassword(encodedPassword);
+        registerResponseDTO.setToken(token);
+        registerResponseDTO.setRole(user.getRole());
+        registerResponseDTO.setId(user.getId());
+
+        return registerResponseDTO;
     }
 }
 

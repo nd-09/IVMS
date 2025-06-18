@@ -1,7 +1,7 @@
 package com.user.imvs.service;
-
-import com.user.imvs.dtos.LoginRequestDTO;
+import com.user.imvs.dtos.AuthServiceResponse;
 import com.user.imvs.dtos.RegisterRequestDTO;
+import com.user.imvs.dtos.RegisterResponseDTO;
 import com.user.imvs.dtos.UserDTO;
 import com.user.imvs.exception.ResourceNotFound;
 import com.user.imvs.helper.AuthProxyClient;
@@ -10,6 +10,7 @@ import com.user.imvs.model.User;
 import com.user.imvs.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,22 +43,30 @@ public class UserServiceImpl implements IUserService {
         return userMapper.toDto(user);
     }
 
+    @Transactional
     @Override
-    public UserDTO create(UserDTO dto) {
+    public RegisterResponseDTO create(UserDTO dto) {
         RegisterRequestDTO requestDTO = new RegisterRequestDTO();
         requestDTO.setUsername(dto.getUsername());
         requestDTO.setPassword(dto.getPassword());
+        requestDTO.setRole(dto.getRole().toString().toUpperCase());
+        AuthServiceResponse res;
+
+        String encodedPassword =passwordEncoder.encode(dto.getPassword());
+        System.out.println("BEFORE save: " + dto.getRole());
+        User user = userMapper.toEntity(dto, encodedPassword);
+        User saved = userRepository.save(user);
+
         try{
-            authProxyClient.registerUser(requestDTO);
+            System.out.println("Inside try block to call proxy auth");
+            res=authProxyClient.registerUser(requestDTO);
+            System.out.println("Reaching here after Proxy being called?");
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException("Failed to register user in auth-service: " + e.getMessage());
         }
 
-        String encodedPassword =passwordEncoder.encode(dto.getPassword());
-        User user = userMapper.toEntity(dto, encodedPassword);
-        User saved = userRepository.save(user);
-        return userMapper.toDto(saved);
+        return userMapper.toRegisterResponseDto(saved,encodedPassword, res.getToken());
     }
 
     @Override

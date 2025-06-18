@@ -33,7 +33,7 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN_INVENTORY')")
     public ResponseEntity<ProductDTO> create(@RequestBody ProductCreateDTO dto) throws BadRequestException {
         ProductDTO created = productService.createProduct(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);

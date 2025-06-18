@@ -1,8 +1,8 @@
 package com.user.imvs.model;
 
 public enum Role {
-    USER,
-    ADMIN,
-    MANAGER
+    USER_INVENTORY,
+    ADMIN_INVENTORY,
+    MANAGER_INVENTORY
 }
 
