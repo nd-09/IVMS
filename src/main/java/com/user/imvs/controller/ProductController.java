@@ -32,6 +32,13 @@ public class ProductController {
         return productService.getProductById(id);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN_INVENTORY')")
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") Long id,@RequestBody ProductDTO productDTO){
+        ProductDTO resp = productService.updateProduct(id, productDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(resp);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN_INVENTORY')")
     public ResponseEntity<ProductDTO> create(@RequestBody ProductCreateDTO dto) throws BadRequestException {

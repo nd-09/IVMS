@@ -5,6 +5,7 @@ import com.user.imvs.dtos.UserDTO;
 import com.user.imvs.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN_INVENTORY')")
     public List<UserDTO> getAllUsers() {
         return userService.getAll();
     }
