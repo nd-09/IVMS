@@ -103,6 +103,7 @@ RESPONSE:
 ```json
 {
   "username": "user",
+  "role": "ADMIN_INVENTORY",
   "token": "eyJhbGciOiJIUzI1NiIsInR..."
 }
 ```
