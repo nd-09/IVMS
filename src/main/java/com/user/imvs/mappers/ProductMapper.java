@@ -12,7 +12,7 @@ public class ProductMapper {
     public ProductDTO toDto(Product product) {
         if (product == null) return null;
         CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setName(product.getName());
+        categoryDTO.setName(product.getCategory().getName());
         ProductDTO dto = new ProductDTO();
         dto.setId(product.getId());
         dto.setName(product.getName());

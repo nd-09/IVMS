@@ -3,15 +3,18 @@ package com.user.imvs.service;
 import com.user.imvs.dtos.CategoryDTO;
 import com.user.imvs.dtos.ProductCreateDTO;
 import com.user.imvs.dtos.ProductDTO;
+import com.user.imvs.dtos.ProductStatsDTO;
 import com.user.imvs.exception.ResourceNotFound;
 import com.user.imvs.mappers.ProductMapper;
 import com.user.imvs.model.Category;
 import com.user.imvs.model.Product;
 import com.user.imvs.repository.CategoryRepository;
 import com.user.imvs.repository.ProductRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,4 +90,34 @@ public class ProductServiceImpl implements IProductService {
             throw new ResourceNotFound("Product not found");
         productRepo.deleteById(id);
     }
+
+    @Override
+    public ProductStatsDTO getProductStats() {
+        ProductStatsDTO productStatsDTO = new ProductStatsDTO();
+        ProductDTO recentlyAddedProduct = new ProductDTO();
+        try{
+            productStatsDTO.setTotalProducts(productRepo.count());
+            Optional<Product> p= productRepo.findTopByOrderByCreatedAtDesc();
+            productStatsDTO.setTotalInventoryValuation(productRepo.getTotalInventoryValuation());
+            productStatsDTO.setLowStockProducts(productRepo.findByStockQuantityIsLessThanEqual(5)
+                    .stream()
+                    .map(productMapper::toDto)
+                    .toList());
+            if(p.isPresent()) {
+                CategoryDTO cat=new CategoryDTO();
+                cat.setName(p.get().getName().toUpperCase());
+                recentlyAddedProduct.setCategory(cat);
+                recentlyAddedProduct.setStockQuantity(p.get().getStockQuantity());
+                recentlyAddedProduct.setDescription(p.get().getDescription());
+                recentlyAddedProduct.setPrice(p.get().getPrice());
+                recentlyAddedProduct.setName(p.get().getName());
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        productStatsDTO.setRecentlyAdded(recentlyAddedProduct);
+        return productStatsDTO;
+    }
+
+
 }

@@ -2,6 +2,7 @@ package com.user.imvs.controller;
 
 import com.user.imvs.dtos.ProductCreateDTO;
 import com.user.imvs.dtos.ProductDTO;
+import com.user.imvs.dtos.ProductStatsDTO;
 import com.user.imvs.service.IProductService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductDTO> getAll() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<ProductDTO>> getAll() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
@@ -51,6 +52,12 @@ public class ProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         productService.deleteProduct(id);
+    }
+
+    @GetMapping("/stats")
+    @PreAuthorize("hasRole('ADMIN_INVENTORY')")
+    public ResponseEntity<ProductStatsDTO> getProductStats() {
+        return ResponseEntity.ok(productService.getProductStats());
     }
 }
 

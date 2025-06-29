@@ -2,6 +2,7 @@ package com.user.imvs.service;
 
 import com.user.imvs.dtos.ProductCreateDTO;
 import com.user.imvs.dtos.ProductDTO;
+import com.user.imvs.dtos.ProductStatsDTO;
 import com.user.imvs.model.Product;
 import org.apache.coyote.BadRequestException;
 
@@ -13,4 +14,5 @@ public interface IProductService {
     ProductDTO getProductById(Long id);
     ProductDTO updateProduct(Long id, ProductDTO product);
     void deleteProduct(Long id);
+    ProductStatsDTO getProductStats();
 }
