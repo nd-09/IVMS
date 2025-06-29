@@ -193,6 +193,33 @@ Authorization: Bearer <JWT-TOKEN>
     }
 }
 ```
+#### 🔸 GET /api/v1/products
+- Fetch all products.
+
+##### RESPONSE:
+```json
+[
+      {
+        "name": "Sample Product",
+        "description": "A test product",
+        "price": 29.99,
+        "stockQuantity": 500,
+        "category": {
+          "name": "Sample Product"
+        }
+      },
+      {
+        "name": "Sample Product 2",
+        "description": "A test product 2",
+        "price": 50.99,
+        "stockQuantity": 100,
+        "category": {
+          "name": "Sample Product 2"
+        }
+      }
+    ]
+
+```
 #### 🔸 PUT /api/v1/products/{id}
 - Update product details. Admin-only access.
 ##### Headers:
@@ -235,6 +262,49 @@ Authorization: Bearer <JWT-TOKEN>
 ```json
 {
   "message": "Product with ID 1 deleted successfully."
+}
+```
+#### 🔸 GET /api/v1/products/stats
+- Fetch inventory stats. Admin-only access.
+
+##### Headers:
+```plaintext
+Authorization: Bearer <JWT-TOKEN>
+```
+##### RESPONSE:
+```json
+{
+    "totalProducts": 100,
+    "recentlyAdded": {
+        "name": "Sample Product",
+        "description": "A test product",
+        "price": 29.99,
+        "stockQuantity": 100,
+        "category": {
+             "name": "Sample Product"
+            }
+          },
+    "totalInventoryValuation": 89000.00,
+    "lowStockProducts": [
+      {
+        "name": "Sample Product",
+        "description": "A test product",
+        "price": 29.99,
+        "stockQuantity": 5,
+        "category": {
+          "name": "Sample Product"
+        }
+      },
+      {
+        "name": "Sample Product 2",
+        "description": "A test product 2",
+        "price": 50.99,
+        "stockQuantity": 2,
+        "category": {
+          "name": "Sample Product 2"
+        }
+      }
+    ]
 }
 ```
 # 🔐 Security
