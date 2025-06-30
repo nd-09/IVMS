@@ -10,11 +10,8 @@ import com.user.imvs.model.Category;
 import com.user.imvs.model.Product;
 import com.user.imvs.repository.CategoryRepository;
 import com.user.imvs.repository.ProductRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

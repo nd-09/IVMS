@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
-@CrossOrigin
 public class ProductController {
 
     private final IProductService productService;
@@ -50,6 +49,7 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN_INVENTORY')")
     public void delete(@PathVariable Long id) {
         productService.deleteProduct(id);
     }

@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin
 public class InventoryAuthController {
 
     private final WebClient.Builder webClientBuilder;
